@@ -1,9 +1,16 @@
 let names = [];
+let actions = [];
+let subjects = [];
+
+// 全局变量
+let mainPageContent = null;
+let lastSelectedData = null;
+let customActions = [];
 
 // 从txt文件加载人名
 async function loadNames() {
   try {
-    const response = await fetch('namelist.txt');
+    const response = await fetch('data/namelist.txt');
     const text = await response.text();
     names = text.split('\n')
       .map(name => name.trim())
@@ -15,8 +22,35 @@ async function loadNames() {
   }
 }
 
-// 操作数组
-const actions = ["找老师", "听写改错", "做练习", "讨论问题"];
+// 加载操作选项
+async function loadActions() {
+  try {
+    const response = await fetch('data/actions.txt');
+    const text = await response.text();
+    actions = text.split('\n')
+      .map(action => action.trim())
+      .filter(action => action.length > 0);
+    generateRadios();
+  } catch (error) {
+    console.error('加载操作列表失败:', error);
+    alert('加载操作列表失败');
+  }
+}
+
+// 加载科目选项
+async function loadSubjects() {
+  try {
+    const response = await fetch('data/subjects.txt');
+    const text = await response.text();
+    subjects = text.split('\n')
+      .map(subject => subject.trim())
+      .filter(subject => subject.length > 0);
+    generateSubjects();
+  } catch (error) {
+    console.error('加载科目列表失败:', error);
+    alert('加载科目列表失败');
+  }
+}
 
 // 打乱数组顺序
 function shuffle(array) {
@@ -104,6 +138,23 @@ function generateRadios() {
   const radioContainer = document.createElement('div');
   radioContainer.className = 'space-y-2';
   
+  // 添加自定义操作按钮和输入区域
+  const customActionDiv = document.createElement('div');
+  customActionDiv.className = 'mb-4';
+  customActionDiv.innerHTML = `
+    <button id="addCustomActionBtn" class="flex items-center px-3 py-2 text-sm text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors">
+      <i class="fas fa-plus mr-2"></i>添加自定义
+    </button>
+    <div id="customActionInput" class="hidden mt-2 flex items-center space-x-2">
+      <input type="text" class="flex-1 px-3 py-1.5 border border-gray-200 dark:border-gray-700 rounded-lg text-sm" 
+        placeholder="输入操作">
+      <button class="px-2 py-1.5 bg-black text-white rounded-lg text-sm">
+        添加
+      </button>
+    </div>
+  `;
+  container.appendChild(customActionDiv);
+  
   actions.forEach((action, index) => {
     const div = document.createElement('div');
     div.className = 'relative';
@@ -126,12 +177,68 @@ function generateRadios() {
   });
   
   container.appendChild(radioContainer);
+
+  // 绑定事件
+  const addBtn = document.getElementById('addCustomActionBtn');
+  const inputDiv = document.getElementById('customActionInput');
+  const input = inputDiv.querySelector('input');
+  const submitBtn = inputDiv.querySelector('button');
+
+  addBtn.addEventListener('click', () => {
+    inputDiv.classList.toggle('hidden');
+    if (!inputDiv.classList.contains('hidden')) {
+      input.focus();
+    }
+  });
+
+  submitBtn.addEventListener('click', () => {
+    const action = input.value.trim();
+    if (action) {
+      customActions.push(action);
+      input.value = '';
+      inputDiv.classList.add('hidden');
+      regenerateActionRadios();
+    }
+  });
+}
+
+// 生成科目选择框
+function generateSubjects() {
+  const container = document.getElementById('subjectArea');
+  const subjectContainer = document.createElement('div');
+  subjectContainer.className = 'space-y-2';
+  
+  subjects.forEach((subject, index) => {
+    const div = document.createElement('div');
+    div.className = 'relative';
+
+    const radio = document.createElement('input');
+    radio.type = 'radio';
+    radio.name = 'subject';
+    radio.id = 'subject_' + index;
+    radio.value = subject;
+    radio.className = 'radio-custom absolute opacity-0';
+
+    const label = document.createElement('label');
+    label.htmlFor = radio.id;
+    label.className = 'block p-2 border border-gray-200 rounded-lg cursor-pointer transition-all hover:border-gray-300 text-sm';
+    label.innerText = subject;
+
+    div.appendChild(radio);
+    div.appendChild(label);
+    subjectContainer.appendChild(div);
+  });
+  
+  container.appendChild(subjectContainer);
 }
 
 // 修改页面加载事件
 document.addEventListener('DOMContentLoaded', function() {
-  loadNames();
-  generateRadios();
+  // 首先初始化暗色模式
+  initializeDarkMode();
+  
+  // 然后加载数据
+  Promise.all([loadNames(), loadActions(), loadSubjects()]);
 });
 
 // 生成按钮点击事件处理
@@ -154,35 +261,51 @@ document.getElementById('generateButton').addEventListener('click', function() {
     }
   });
 
-  if (selectedNames.length === 0 || !selectedAction) {
-    alert('请选择至少一个人名和一个操作');
+  // 获取选中的科目
+  let selectedSubject = null;
+  const subjectRadios = document.getElementsByName('subject');
+  subjectRadios.forEach(function(radio) {
+    if (radio.checked) {
+      selectedSubject = radio.value;
+    }
+  });
+
+  if (selectedNames.length === 0 || !selectedAction || !selectedSubject) {
+    alert('请选择至少一个人名、一个操作和一个科目');
     return;
   }
 
-  showResultModal(selectedNames, selectedAction);
+  showResultModal(selectedNames, selectedAction, selectedSubject);
 });
 
 // 修改显示结果模态框函数
-function showResultModal(selectedNames, selectedAction) {
+function showResultModal(selectedNames, selectedAction, selectedSubject) {
+  lastSelectedData = { selectedNames, selectedAction, selectedSubject };
+  
+  // 保存主页面内容
+  if (!mainPageContent) {
+    mainPageContent = document.body.innerHTML;
+  }
+
   document.body.innerHTML = '';
   
   const resultPage = document.createElement('div');
-  resultPage.className = 'min-h-screen bg-white p-6 animate__animated animate__fadeIn';
+  resultPage.className = 'min-h-screen bg-white dark:bg-gray-900 p-6 animate__animated animate__fadeIn';
   
   const container = document.createElement('div');
   container.className = 'max-w-7xl mx-auto space-y-8';
 
-  // 1. 标题栏
+  // 修改标题栏
   const header = document.createElement('div');
   header.className = 'flex items-center justify-between py-4 animate__animated animate__fadeInDown animate__faster';
   header.innerHTML = `
-    <h1 class="text-3xl font-semibold text-black">分组结果</h1>
-    <button class="flex items-center text-gray-600 hover:text-black transition-colors" onclick="location.reload()">
-      <i class="fas fa-arrow-left mr-2"></i>返回重新分组
+    <h1 class="text-4xl font-semibold text-black dark:text-white">分组结果</h1>
+    <button class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors" onclick="backToMain()">
+      <i class="fas fa-times text-xl"></i>
     </button>
   `;
 
-  // 2. 统计信息
+  // 修改统计信息样式
   const stats = document.createElement('div');
   stats.className = 'bg-gray-50 rounded-xl p-6 animate__animated animate__fadeInUp';
   stats.innerHTML = `
@@ -190,6 +313,10 @@ function showResultModal(selectedNames, selectedAction) {
       <div class="text-gray-600">
         <div class="text-sm mb-1">任务类型</div>
         <div class="text-2xl font-semibold">${selectedAction}</div>
+      </div>
+      <div class="text-gray-600">
+        <div class="text-sm mb-1">科目</div>
+        <div class="text-2xl font-semibold">${selectedSubject}</div>
       </div>
       <div class="text-gray-600">
         <div class="text-sm mb-1">参与人数</div>
@@ -203,7 +330,7 @@ function showResultModal(selectedNames, selectedAction) {
   exportBtn.className = 'flex items-center space-x-4 animate__animated animate__fadeInUp';
   exportBtn.innerHTML = `
     <button class="flex items-center px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors" 
-      onclick="exportAsTxt('${selectedAction}', ${JSON.stringify(selectedNames).replace(/"/g, '&quot;')})">
+      onclick="exportAsTxt('${selectedAction}', ${JSON.stringify(selectedNames).replace(/"/g, '&quot;')}, '${selectedSubject}')">
       <i class="fas fa-file-text mr-2"></i>导出文本文件
     </button>
   `;
@@ -218,7 +345,7 @@ function showResultModal(selectedNames, selectedAction) {
       <div class="bg-gray-50 rounded-xl p-6">
         <div class="text-lg font-medium text-gray-700 mb-2">${name}</div>
         <div class="text-gray-500 flex items-center">
-          <i class="fas fa-arrow-right mr-2"></i>${selectedAction}
+          <i class="fas fa-arrow-right mr-2"></i>${selectedSubject} - ${selectedAction}
         </div>
       </div>
     `;
@@ -231,16 +358,42 @@ function showResultModal(selectedNames, selectedAction) {
   container.appendChild(resultGrid);
   resultPage.appendChild(container);
   document.body.appendChild(resultPage);
+
+  // 添加ESC键监听
+  document.addEventListener('keydown', handleEscKey);
 }
 
-// 添加导出文本功能
-function exportAsTxt(action, names) {
+// 返回主页面
+function backToMain() {
+  document.removeEventListener('keydown', handleEscKey);
+  document.body.innerHTML = mainPageContent;
+  
+  // 重新初始化页面
+  initializeDarkMode(); // 确保暗色模式状态正确
+  initializePage();
+  
+  // 恢复之前的选择
+  if (lastSelectedData) {
+    restoreLastSelection();
+  }
+}
+
+// 处理ESC键
+function handleEscKey(e) {
+  if (e.key === 'Escape') {
+    backToMain();
+  }
+}
+
+// 修改导出文本功能
+function exportAsTxt(action, names, subject) {
   const content = `任务分配清单\n
+科目：${subject}
 任务类型：${action}
 参与人数：${names.length}人
 ------------------------
 分配详情：
-${names.map(name => `${name} - ${action}`).join('\n')}
+${names.map(name => `${name} - ${subject} - ${action}`).join('\n')}
 ------------------------
 导出时间：${new Date().toLocaleString()}
 `;
@@ -292,3 +445,76 @@ function selectRandom() {
   
   updateSelectedCount();
 }
+
+// 暗色模式切换
+function toggleDarkMode() {
+  const isDark = document.documentElement.classList.toggle('dark');
+  localStorage.setItem('darkMode', isDark);
+  const icon = document.getElementById('darkModeToggle');
+  icon.innerHTML = isDark ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+}
+
+// 添加自定义操作
+function addCustomAction() {
+  const input = document.getElementById('customActionInput');
+  const action = input.value.trim();
+  
+  if (action) {
+    customActions.push(action);
+    input.value = '';
+    regenerateActionRadios();
+  }
+}
+
+// 重新生成操作选项
+function regenerateActionRadios() {
+  const allActions = [...actions, ...customActions];
+  const container = document.getElementById('radioArea');
+  const radioContainer = container.querySelector('.space-y-2');
+  radioContainer.innerHTML = '';
+  
+  allActions.forEach((action, index) => {
+    const div = document.createElement('div');
+    div.className = 'relative';
+
+    const radio = document.createElement('input');
+    radio.type = 'radio';
+    radio.name = 'action';
+    radio.id = 'action_' + index;
+    radio.value = action;
+    radio.className = 'radio-custom absolute opacity-0';
+
+    const label = document.createElement('label');
+    label.htmlFor = radio.id;
+    label.className = 'block p-2 border border-gray-200 rounded-lg cursor-pointer transition-all hover:border-gray-300 text-sm';
+    label.innerText = action;
+
+    div.appendChild(radio);
+    div.appendChild(label);
+    radioContainer.appendChild(div);
+  });
+}
+
+// 初始化页面
+function initializePage() {
+  // 加载其他数据
+  loadNames();
+  loadActions();
+  loadSubjects();
+}
+
+// 添加初始化暗色模式的函数
+function initializeDarkMode() {
+  const isDark = localStorage.getItem('darkMode') === 'true';
+  if (isDark) {
+    document.documentElement.classList.add('dark');
+  } else {
+    document.documentElement.classList.remove('dark');
+  }
+  
+  const darkModeToggle = document.getElementById('darkModeToggle');
+  darkModeToggle.innerHTML = isDark ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+  darkModeToggle.addEventListener('click', toggleDarkMode);
+}
+
+// 其他辅助函数...

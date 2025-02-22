@@ -13,7 +13,7 @@ app.post('/save-names', async (req, res) => {
     // 将数组转换为文本格式,每行一个名字
     const content = names.join('\n');
     await fs.writeFile(
-      path.join(__dirname, 'namelist.txt'),
+      path.join(__dirname, 'data/namelist.txt'),
       content,
       'utf8'
     );

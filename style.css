@@ -2,6 +2,7 @@
 
 body {
   font-family: 'Inter', sans-serif;
+  transition: var(--bg-transition), var(--text-transition), var(--border-transition);
 }
 
 .checkbox-custom:checked + label div {
@@ -106,4 +107,180 @@ body {
 
 #checkboxArea, #radioArea, .bg-gray-50 {
   border-radius: 1rem; /* 增大区块圆角 */
+  transition: var(--bg-transition), var(--text-transition), var(--border-transition);
+}
+
+/* 修复圆角问题 */
+.bg-gray-50\/80,
+#radioArea,
+#subjectArea,
+#generateButton,
+.result-close-btn {
+  border-radius: 1rem;
+}
+
+/* 添加暗色模式样式 */
+:root {
+  --bg-transition: background-color 0.3s ease;
+  --text-transition: color 0.3s ease;
+  --border-transition: border-color 0.3s ease;
+}
+
+.dark {
+  color-scheme: dark;
+}
+
+.dark body {
+  background-color: #111827;
+  color: #f3f4f6;
+}
+
+.dark .bg-gray-50,
+.dark .bg-gray-50\/80 {
+  background-color: #1f2937;
+}
+
+.dark .name-block label {
+  background: #1f2937;
+  border-color: #374151;
+}
+
+.dark .name-block:hover label {
+  background: #374151;
+  border-color: #4b5563;
+}
+
+/* 确保暗色模式下的文本颜色正确 */
+.dark .text-gray-700,
+.dark .text-black {
+  color: #f3f4f6;
+}
+
+.dark .border-gray-200 {
+  border-color: #374151;
+}
+
+.dark #generateButton {
+  background-color: #111827;
+  color: #f3f4f6;
+}
+
+.dark .check-icon {
+  color: #f3f4f6;
+}
+
+.dark .text-gray-700 {
+  color: #f3f4f6;
+}
+
+.dark .text-gray-600 {
+  color: #d1d5db;
+}
+
+.dark .text-gray-500 {
+  color: #9ca3af;
+}
+
+.dark .border-gray-200 {
+  border-color: #374151;
+}
+
+.dark .hover\:bg-gray-200:hover {
+  background-color: #374151;
+}
+
+/* 修改暗色模式下的按钮样式 */
+.dark .bg-black {
+  background-color: #111827;
+  color: #f3f4f6;
+}
+
+.dark .hover\:bg-gray-100:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.dark button.bg-gray-100 {
+  background-color: #374151;
+  color: #f3f4f6;
+}
+
+.dark button.hover\:bg-gray-200:hover {
+  background-color: #4b5563;
+}
+
+/* Ghost动画样式 */
+.ghost-corner {
+  position: fixed;
+  left: 20px;
+  bottom: 20px;
+  width: 80px;
+  height: 80px;
+  opacity: 0.5;
+  transition: opacity 0.3s;
+}
+
+.ghost-corner:hover {
+  opacity: 1;
+}
+
+/* 渐变过渡效果 */
+.bg-gray-50,
+.bg-gray-50\/80,
+button,
+label,
+.text-gray-700,
+.text-gray-600,
+.text-gray-500,
+.border-gray-200 {
+  transition: var(--bg-transition), var(--text-transition), var(--border-transition);
+}
+
+/* 修改按钮悬停样式 */
+#darkModeToggle,
+.result-close-btn {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+#darkModeToggle:hover,
+.result-close-btn:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.dark #darkModeToggle:hover,
+.dark .result-close-btn:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* 自定义操作输入框样式 */
+#customActionInput {
+  transition: all 0.3s ease;
+}
+
+#customActionInput.hidden {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+#customActionInput:not(.hidden) {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+#customActionInput input {
+  max-width: 150px;
+}
+
+#customActionInput button {
+  background-color: #000;
+}
+
+.dark #customActionInput button {
+  background-color: #111827;
+  color: #f3f4f6;
 }

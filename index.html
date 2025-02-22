@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="zh" class="light">
 <head>
   <meta charset="UTF-8">
   <title>分组系统</title>
@@ -9,12 +9,15 @@
   <link rel="stylesheet" href="style.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
-<body class="bg-white h-screen p-6"> <!-- 增加页面内边距 -->
+<body class="bg-white dark:bg-gray-900 h-screen p-6">
   <div class="h-full max-w-7xl mx-auto flex flex-col">
-    <header class="flex items-center mb-6"> <!-- 简化header -->
-      <h1 class="text-3xl font-semibold text-black">
+    <header class="flex items-center justify-between mb-6">
+      <h1 class="text-3xl font-semibold text-black dark:text-white">
         分组系统
       </h1>
+      <button id="darkModeToggle" class="rounded-lg transition-colors dark:text-white">
+        <i class="fas fa-moon"></i>
+      </button>
     </header>
 
     <div class="flex-1 grid md:grid-cols-4 gap-6 min-h-0"> <!-- 增加gap -->
@@ -39,11 +42,27 @@
           </div>
         </div>
 
+        <!-- 添加科目选择区域 -->
+        <div id="subjectArea" class="bg-gray-50/80 p-6">
+          <div class="flex items-center space-x-4 mb-4">
+            <div class="w-10 h-10 rounded-full bg-black text-white flex items-center justify-center text-lg font-medium">
+              3
+            </div>
+            <div>
+              <h3 class="text-lg font-medium text-gray-700 mb-1">选择科目</h3>
+              <div class="text-sm text-gray-500">选择一个学科</div>
+            </div>
+          </div>
+          <div class="space-y-3">
+            <!-- 通过JS添加单选框 -->
+          </div>
+        </div>
+
         <!-- 生成按钮区域 -->
         <div class="bg-gray-50/80 p-6"> <!-- 墛加内边距 -->
           <div class="flex items-center space-x-4 mb-4">
             <div class="w-10 h-10 rounded-full bg-black text-white flex items-center justify-center text-lg font-medium">
-              3
+              4
             </div>
             <div>
               <h3 class="text-lg font-medium text-gray-700 mb-1">生成结果</h3>
@@ -57,6 +76,11 @@
         </div>
       </div>
     </div>
+  </div>
+
+  <!-- 添加Ghost动画容器 -->
+  <div class="ghost-corner">
+    <!-- Ghost SVG将通过JS动态添加 -->
   </div>
 
   <script src="script.js"></script>
