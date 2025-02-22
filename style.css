@@ -1,0 +1,109 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
+body {
+  font-family: 'Inter', sans-serif;
+}
+
+.checkbox-custom:checked + label div {
+  border-color: #000;
+  background-color: #000;
+}
+
+.radio-custom:checked + label {
+  border-color: #000;
+  background-color: #f8f8f8;
+}
+
+.step-line {
+  width: 2px;
+  height: 100%;
+  background: #f0f0f0;
+  position: absolute;
+  left: 24px;
+  top: 0;
+  z-index: -1;
+}
+
+.checkbox-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr); /* 减少为5列 */
+  gap: 0.5rem; /* 增加间距 */
+  padding: 0.25rem; /* 调整内边距 */
+  min-height: 0;
+  height: 100%; /* 使用100%高度 */
+  align-content: start; /* 从顶部开始排列 */
+}
+
+@media (max-width: 1536px) { /* 2xl */
+  .checkbox-grid { grid-template-columns: repeat(4, 1fr); }
+}
+
+@media (max-width: 1280px) { /* xl */
+  .checkbox-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 1024px) { /* lg */
+  .checkbox-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 768px) { /* md */
+  .checkbox-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+.name-block {
+  position: relative;
+  height: 40px; /* 增加高度 */
+  width: 100%; /* 确保占满网格单元格 */
+}
+
+.name-block label {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  padding: 0 1rem; /* 增加左右内边距 */
+  font-size: 1.125rem; /* 增大字号 */
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem; /* 增大圆角 */
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+  letter-spacing: 0.02em;
+  justify-content: space-between; /* 调整内容布局 */
+  white-space: nowrap; /* 防止文字换行 */
+}
+
+.name-block label span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1; /* 让文字占据剩余空间 */
+  margin-right: 8px; /* 与图标保持间距 */
+}
+
+.name-block:hover label {
+  border-color: #000;
+  background: #f8f8f8;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.checkbox-custom:checked + label {
+  background: #f8f8f8;
+  border-color: #000;
+}
+
+.checkbox-custom:checked + label .check-icon {
+  opacity: 1;
+}
+
+.check-icon {
+  opacity: 0;
+  transition: opacity 0.2s;
+  margin-left: 12px; /* 增加与文字的间距 */
+  font-size: 1rem; /* 增大对勾图标 */
+  color: #000;
+}
+
+#checkboxArea, #radioArea, .bg-gray-50 {
+  border-radius: 1rem; /* 增大区块圆角 */
+}
