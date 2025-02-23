@@ -747,31 +747,39 @@ function createDebugPanel() {
   debugPanel = document.createElement('div');
   debugPanel.className = 'debug-panel';
   debugPanel.innerHTML = `
-    <div class="close-btn" onclick="toggleDebugPanel(false)">×</div>
-    <h2 class="text-2xl font-bold mb-6">调试面板</h2>
-    
-    <div class="debug-section">
-      <h3>名单管理</h3>
-      <div class="space-y-4">
-        <div>
-          <label class="file-upload">
-            <input type="file" accept=".txt" onchange="handleFileUpload(event)">
-            <i class="fas fa-upload mr-2"></i> 导入本地名单
-          </label>
-        </div>
-        <button onclick="exportCurrentNames()" class="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors">
-          导出当前名单
-        </button>
-        <button onclick="clearStoredNames()" class="px-4 py-2 bg-red-100 rounded-lg hover:bg-red-200 transition-colors">
-          清除缓存名单
+    <div class="max-w-7xl mx-auto p-6">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-3xl font-semibold text-black">调试面板</h2>
+        <button onclick="toggleDebugPanel(false)" class="text-2xl text-gray-600 hover:text-black transition-colors">
+          <i class="fas fa-times"></i>
         </button>
       </div>
-    </div>
-    
-    <div class="debug-section">
-      <h3>缓存信息</h3>
-      <div id="cacheInfo" class="text-sm text-gray-600">
-        加载中...
+      
+      <div class="grid md:grid-cols-2 gap-6">
+        <div class="debug-section">
+          <h3 class="text-lg font-medium mb-4">名单管理</h3>
+          <div class="space-y-4">
+            <div class="flex items-center space-x-4">
+              <label class="file-upload flex-1">
+                <input type="file" accept=".txt" onchange="handleFileUpload(event)">
+                <i class="fas fa-upload mr-2"></i> 导入本地名单
+              </label>
+              <button onclick="exportCurrentNames()" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">
+                导出名单
+              </button>
+            </div>
+            <button onclick="clearStoredNames()" class="w-full px-4 py-2 bg-red-50 hover:bg-red-100 rounded-lg transition-colors text-red-600">
+              清除缓存名单
+            </button>
+          </div>
+        </div>
+        
+        <div class="debug-section">
+          <h3 class="text-lg font-medium mb-4">缓存信息</h3>
+          <div id="cacheInfo" class="text-sm text-gray-600 space-y-2">
+            加载中...
+          </div>
+        </div>
       </div>
     </div>
   `;
@@ -859,3 +867,18 @@ function updateCacheInfo() {
     </div>
   `;
 }
+
+// 修改ESC键监听，统一处理方式
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    if (document.querySelector('.min-h-screen')) {
+      hideResult();
+    } else if (debugPanel?.classList.contains('show')) {
+      toggleDebugPanel(false);
+    }
+  }
+  if (e.code === 'Space' && e.target === document.body) {
+    e.preventDefault();
+    toggleDebugPanel(true);
+  }
+});
