@@ -2,7 +2,6 @@
 
 body {
   font-family: 'Inter', sans-serif;
-  transition: var(--bg-transition), var(--text-transition), var(--border-transition);
 }
 
 .checkbox-custom:checked + label div {
@@ -53,8 +52,14 @@ body {
 
 .name-block {
   position: relative;
-  height: 40px; /* 增加高度 */
+  height: 48px; /* 增加高度 */
   width: 100%; /* 确保占满网格单元格 */
+  animation: slideIn 0.3s ease-out forwards;
+  opacity: 0;
+}
+
+.name-block:nth-child(n) {
+  animation-delay: calc(0.03s * var(--animation-order, 0));
 }
 
 .name-block label {
@@ -62,16 +67,17 @@ body {
   inset: 0;
   display: flex;
   align-items: center;
-  padding: 0 1rem; /* 增加左右内边距 */
+  padding: 0 1.25rem; /* 增加内边距 */
   font-size: 1.125rem; /* 增大字号 */
   background: white;
   border: 1px solid #e5e7eb;
-  border-radius: 0.5rem; /* 增大圆角 */
+  border-radius: 0.75rem; /* 增大圆角 */
   cursor: pointer;
-  transition: all 0.15s ease-in-out;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   letter-spacing: 0.02em;
   justify-content: space-between; /* 调整内容布局 */
   white-space: nowrap; /* 防止文字换行 */
+  height: 100%; /* 确保label填满整个block */
 }
 
 .name-block label span {
@@ -95,6 +101,7 @@ body {
 
 .checkbox-custom:checked + label .check-icon {
   opacity: 1;
+  animation: checkmark 0.3s ease-in-out forwards;
 }
 
 .check-icon {
@@ -107,180 +114,157 @@ body {
 
 #checkboxArea, #radioArea, .bg-gray-50 {
   border-radius: 1rem; /* 增大区块圆角 */
-  transition: var(--bg-transition), var(--text-transition), var(--border-transition);
+  background: linear-gradient(120deg, #f8f9fa 0%, #f1f3f5 100%);
+  background-size: 200% 200%;
+  animation: gradientBG 15s ease infinite;
 }
 
-/* 修复圆角问题 */
-.bg-gray-50\/80,
-#radioArea,
-#subjectArea,
-#generateButton,
-.result-close-btn {
+.bg-gray-50 {
+  background: linear-gradient(120deg, #f8f9fa 0%, #f1f3f5 100%);
+  background-size: 200% 200%;
+  animation: gradientBG 15s ease infinite;
+}
+
+/* 添加结果页面的样式 */
+.result-grid {
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+}
+
+.result-card {
+  background: #f8f8f8;
+  padding: 1.5rem;
   border-radius: 1rem;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
 }
 
-/* 添加暗色模式样式 */
-:root {
-  --bg-transition: background-color 0.3s ease;
-  --text-transition: color 0.3s ease;
-  --border-transition: border-color 0.3s ease;
+.result-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.dark {
-  color-scheme: dark;
+.result-card .name {
+  font-size: 1.5rem;
+  font-weight: 500;
+  margin-bottom: 0.75rem;
 }
 
-.dark body {
-  background-color: #111827;
-  color: #f3f4f6;
+.result-card .task {
+  font-size: 1.125rem;
+  color: #666;
 }
 
-.dark .bg-gray-50,
-.dark .bg-gray-50\/80 {
-  background-color: #1f2937;
+.radio-custom + label,
+.checkbox-custom + label {
+  position: relative;
+  overflow: hidden;
 }
 
-.dark .name-block label {
-  background: #1f2937;
-  border-color: #374151;
-}
-
-.dark .name-block:hover label {
-  background: #374151;
-  border-color: #4b5563;
-}
-
-/* 确保暗色模式下的文本颜色正确 */
-.dark .text-gray-700,
-.dark .text-black {
-  color: #f3f4f6;
-}
-
-.dark .border-gray-200 {
-  border-color: #374151;
-}
-
-.dark #generateButton {
-  background-color: #111827;
-  color: #f3f4f6;
-}
-
-.dark .check-icon {
-  color: #f3f4f6;
-}
-
-.dark .text-gray-700 {
-  color: #f3f4f6;
-}
-
-.dark .text-gray-600 {
-  color: #d1d5db;
-}
-
-.dark .text-gray-500 {
-  color: #9ca3af;
-}
-
-.dark .border-gray-200 {
-  border-color: #374151;
-}
-
-.dark .hover\:bg-gray-200:hover {
-  background-color: #374151;
-}
-
-/* 修改暗色模式下的按钮样式 */
-.dark .bg-black {
-  background-color: #111827;
-  color: #f3f4f6;
-}
-
-.dark .hover\:bg-gray-100:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-}
-
-.dark button.bg-gray-100 {
-  background-color: #374151;
-  color: #f3f4f6;
-}
-
-.dark button.hover\:bg-gray-200:hover {
-  background-color: #4b5563;
-}
-
-/* Ghost动画样式 */
-.ghost-corner {
-  position: fixed;
-  left: 20px;
-  bottom: 20px;
-  width: 80px;
-  height: 80px;
-  opacity: 0.5;
-  transition: opacity 0.3s;
-}
-
-.ghost-corner:hover {
-  opacity: 1;
-}
-
-/* 渐变过渡效果 */
-.bg-gray-50,
-.bg-gray-50\/80,
-button,
-label,
-.text-gray-700,
-.text-gray-600,
-.text-gray-500,
-.border-gray-200 {
-  transition: var(--bg-transition), var(--text-transition), var(--border-transition);
-}
-
-/* 修改按钮悬停样式 */
-#darkModeToggle,
-.result-close-btn {
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 8px;
-  transition: all 0.2s ease;
-}
-
-#darkModeToggle:hover,
-.result-close-btn:hover {
-  background-color: rgba(0, 0, 0, 0.05);
-}
-
-.dark #darkModeToggle:hover,
-.dark .result-close-btn:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-}
-
-/* 自定义操作输入框样式 */
-#customActionInput {
-  transition: all 0.3s ease;
-}
-
-#customActionInput.hidden {
+.radio-custom + label::after,
+.checkbox-custom + label::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  background-image: radial-gradient(circle, #000 10%, transparent 10.01%);
+  background-repeat: no-repeat;
+  background-position: 50%;
+  transform: scale(10, 10);
   opacity: 0;
-  transform: translateY(-10px);
+  transition: transform .5s, opacity 1s;
 }
 
-#customActionInput:not(.hidden) {
-  opacity: 1;
-  transform: translateY(0);
+.radio-custom:active + label::after,
+.checkbox-custom:active + label::after {
+  transform: scale(0, 0);
+  opacity: 0.2;
+  transition: 0s;
 }
 
-#customActionInput input {
-  max-width: 150px;
+@keyframes checkmark {
+  0% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.2);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
-#customActionInput button {
-  background-color: #000;
+@keyframes gradientBG {
+  0% { background-position: 0% 50% }
+  50% { background-position: 100% 50% }
+  100% { background-position: 0% 50% }
 }
 
-.dark #customActionInput button {
-  background-color: #111827;
-  color: #f3f4f6;
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+button,
+input {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+button:active {
+  transform: scale(0.95);
+}
+
+/* 移除旧的动画类 */
+.animate__animated {
+  display: none;
+}
+
+/* 移除3D相关样式 */
+.grid.gap-4 > div {
+  opacity: 0;  /* 初始隐藏，由GSAP控制显示 */
+}
+
+/* 自定义加载进度条样式 */
+#nprogress .bar {
+  background: #000 !important;
+  height: 3px !important;
+}
+
+#nprogress .peg {
+  box-shadow: 0 0 10px #000, 0 0 5px #000 !important;
+}
+
+#nprogress .spinner-icon {
+  border-top-color: #000 !important;
+  border-left-color: #000 !important;
+}
+
+/* 修改清除按钮样式 */
+#clearAllBtn {
+  z-index: 100;
+  transition: all 0.2s ease-out;
+}
+
+#clearAllBtn.confirm {
+  background-color: #dc2626; /* red-600 */
+}
+
+#clearAllBtn:active {
+  transform: scale(0.95);
+}
+
+/* 移除原有的hover效果 */
+#clearAllBtn:hover {
+  transform: none;
+  box-shadow: none;
 }

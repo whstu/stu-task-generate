@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh" class="light">
+<html lang="zh">
 <head>
   <meta charset="UTF-8">
   <title>分组系统</title>
@@ -8,16 +8,18 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
   <link rel="stylesheet" href="style.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <!-- 添加 NProgress -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  <!-- 添加 GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 </head>
-<body class="bg-white dark:bg-gray-900 h-screen p-6">
+<body class="bg-white h-screen p-6"> <!-- 增加页面内边距 -->
   <div class="h-full max-w-7xl mx-auto flex flex-col">
-    <header class="flex items-center justify-between mb-6">
-      <h1 class="text-3xl font-semibold text-black dark:text-white">
+    <header class="flex items-center mb-6"> <!-- 简化header -->
+      <h1 class="text-3xl font-semibold text-black">
         分组系统
       </h1>
-      <button id="darkModeToggle" class="rounded-lg transition-colors dark:text-white">
-        <i class="fas fa-moon"></i>
-      </button>
     </header>
 
     <div class="flex-1 grid md:grid-cols-4 gap-6 min-h-0"> <!-- 增加gap -->
@@ -69,18 +71,18 @@
               <div class="text-sm text-gray-500">点击按钮生成分组</div>
             </div>
           </div>
-          <button id="generateButton" class="w-full bg-black text-white py-3 rounded-lg text-base font-medium transition-all hover:opacity-90 hover:transform hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center shadow-sm hover:shadow-md">
-            <i class="fas fa-wand-magic-sparkles mr-2"></i>
-            生成分组
-          </button>
+          <div class="flex items-center space-x-4">
+            <button id="generateButton" class="flex-1 bg-black text-white py-3 rounded-lg text-base font-medium transition-all hover:opacity-90 hover:transform hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center shadow-sm hover:shadow-md">
+              <i class="fas fa-wand-magic-sparkles mr-2"></i>
+              生成分组
+            </button>
+            <button id="clearAllBtn" class="w-12 h-12 bg-gray-100 hover:bg-gray-200 rounded-lg flex items-center justify-center transition-all">
+              <i class="fas fa-trash-alt"></i>
+            </button>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-
-  <!-- 添加Ghost动画容器 -->
-  <div class="ghost-corner">
-    <!-- Ghost SVG将通过JS动态添加 -->
   </div>
 
   <script src="script.js"></script>
