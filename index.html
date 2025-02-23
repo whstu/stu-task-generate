@@ -20,12 +20,12 @@
 
     <div class="flex-1 grid md:grid-cols-4 gap-6 min-h-0"> <!-- 增加gap -->
       <!-- 选择人员区域 - 简化为空容器 -->
-      <div id="checkboxArea" class="md:col-span-3 bg-gray-50/80 p-6 flex flex-col">
+      <div id="checkboxArea" class="md:col-span-3 card-panel p-6 flex flex-col">
       </div>
 
       <div class="md:col-span-1 flex flex-col gap-6"> <!-- 墛加gap -->
         <!-- 选择操作区域 -->
-        <div id="radioArea" class="bg-gray-50/80 p-6 flex-1"> <!-- 墛加内边距 -->
+        <div id="radioArea" class="card-panel p-6 flex-1"> <!-- 墛加内边距 -->
           <div class="flex items-center space-x-4 mb-4">
             <div class="w-10 h-10 rounded-full bg-black text-white flex items-center justify-center text-lg font-medium">
               2
@@ -41,7 +41,7 @@
         </div>
 
         <!-- 添加科目选择区域 -->
-        <div id="subjectArea" class="bg-gray-50/80 p-6">
+        <div id="subjectArea" class="card-panel p-6">
           <div class="flex items-center space-x-4 mb-4">
             <div class="w-10 h-10 rounded-full bg-black text-white flex items-center justify-center text-lg font-medium">
               3
@@ -57,7 +57,7 @@
         </div>
 
         <!-- 生成按钮区域 -->
-        <div class="bg-gray-50/80 p-6"> <!-- 墛加内边距 -->
+        <div id="actionArea" class="card-panel p-6"> <!-- 墛加内边距 -->
           <div class="flex items-center space-x-4 mb-4">
             <div class="w-10 h-10 rounded-full bg-black text-white flex items-center justify-center text-lg font-medium">
               4
@@ -68,11 +68,11 @@
             </div>
           </div>
           <div class="flex items-center space-x-4">
-            <button id="generateButton" class="flex-1 bg-black text-white py-3 rounded-lg text-base font-medium transition-all hover:opacity-90 hover:transform hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center shadow-sm hover:shadow-md">
+            <button id="generateButton" class="flex-1 bg-black text-white py-3 rounded-xl text-base font-medium transition-all hover:opacity-90 hover:transform hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center shadow-sm hover:shadow-md">
               <i class="fas fa-wand-magic-sparkles mr-2"></i>
               生成分组
             </button>
-            <button id="clearAllBtn" class="w-12 h-12 bg-gray-100 hover:bg-gray-200 rounded-lg flex items-center justify-center transition-all">
+            <button id="clearAllBtn" class="w-12 h-12 bg-gray-100 hover:bg-gray-200 rounded-xl flex items-center justify-center transition-all">
               <i class="fas fa-trash-alt"></i>
             </button>
           </div>

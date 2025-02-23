@@ -2,6 +2,15 @@ let names = [];
 let actions = [];
 let subjects = [];
 
+// 在文件顶部添加状态常量
+const REVIEW_STATES = ['none', 'review', 'submit'];
+const REVIEW_LABELS = {
+  'none': '无',
+  'review': '需要老师复查',
+  'submit': '需要提交作业'
+};
+let currentReviewState = 'none';
+
 // 从txt文件加载人名
 async function loadNames() {
   NProgress.start();
@@ -156,7 +165,7 @@ function generateCheckboxes() {
   });
 }
 
-// 生成单选框函数
+// 修改 generateRadios 函数，添加轮换按钮
 function generateRadios() {
   const container = document.getElementById('radioArea');
   const radioContainer = document.createElement('div');
@@ -202,6 +211,18 @@ function generateRadios() {
   `;
   container.appendChild(customDiv);
 
+  // 添加轮换按钮
+  const rotateBtn = document.createElement('div');
+  rotateBtn.className = 'rotate-btn mt-4';
+  rotateBtn.innerHTML = `
+    <div class="flex items-center justify-between">
+      <span>后续操作：</span>
+      <span class="status" id="reviewStatus">${REVIEW_LABELS[currentReviewState]}</span>
+    </div>
+  `;
+  rotateBtn.addEventListener('click', rotateReviewState);
+  container.appendChild(rotateBtn);
+
   // 为单选框添加动画
   gsap.from(radioContainer.children, {
     y: 15,
@@ -209,6 +230,19 @@ function generateRadios() {
     duration: 0.4,
     stagger: 0.05
   });
+}
+
+// 添加轮换状态函数
+function rotateReviewState() {
+  const currentIndex = REVIEW_STATES.indexOf(currentReviewState);
+  const nextIndex = (currentIndex + 1) % REVIEW_STATES.length;
+  currentReviewState = REVIEW_STATES[nextIndex];
+  
+  const statusElement = document.getElementById('reviewStatus');
+  statusElement.textContent = REVIEW_LABELS[currentReviewState];
+  
+  // 如果是需要复查状态，添加特殊样式
+  statusElement.className = 'status' + (currentReviewState === 'review' ? ' review' : '');
 }
 
 // 添加自定义操作
@@ -246,7 +280,8 @@ function saveSelections() {
   const selections = {
     names: Array.from(document.querySelectorAll('.checkbox-custom:checked')).map(cb => cb.value),
     action: document.querySelector('input[name="action"]:checked')?.value,
-    subject: document.querySelector('input[name="subject"]:checked')?.value
+    subject: document.querySelector('input[name="subject"]:checked')?.value,
+    reviewState: currentReviewState
   };
   sessionStorage.setItem('lastSelections', JSON.stringify(selections));
 }
@@ -280,18 +315,31 @@ function restoreSelections() {
     if (subjectRadio) subjectRadio.checked = true;
   }
   
+  // 恢复审查状态
+  if (selections.reviewState) {
+    currentReviewState = selections.reviewState;
+    const statusElement = document.getElementById('reviewStatus');
+    if (statusElement) {
+      statusElement.textContent = REVIEW_LABELS[currentReviewState];
+      statusElement.className = 'status' + (currentReviewState === 'review' ? ' review' : '');
+    }
+  }
+  
   updateSelectedCount();
 }
 
-// 生成科目选择框
+// 修改生成科目选择框函数
 function generateSubjects() {
   const container = document.getElementById('subjectArea');
   const subjectContainer = document.createElement('div');
   subjectContainer.className = 'space-y-2';
   
+  // 先设置所有科目按钮的初始状态（设为不可见）
   subjects.forEach((subject, index) => {
     const div = document.createElement('div');
     div.className = 'relative';
+    div.style.opacity = '0';
+    div.style.transform = 'translateX(-20px)';
 
     const radio = document.createElement('input');
     radio.type = 'radio';
@@ -311,6 +359,17 @@ function generateSubjects() {
   });
   
   container.appendChild(subjectContainer);
+
+  // 使用GSAP添加交错动画
+  gsap.to(subjectContainer.children, {
+    opacity: 1,
+    x: 0,
+    duration: 0.4,
+    stagger: {
+      each: 0.05,
+      ease: "power2.out"
+    }
+  });
 }
 
 // 修改页面加载事件，添加卡片动画
@@ -430,24 +489,35 @@ function showResultModal(selectedNames, selectedAction, selectedSubject) {
     { label: '科目', value: selectedSubject },
     { label: '参与人数', value: `${selectedNames.length}人` }
   ];
+
+  // 如果有后续操作，添加到统计信息中
+  if (currentReviewState !== 'none') {
+    statItems.push({
+      label: '后续操作',
+      value: REVIEW_LABELS[currentReviewState],
+      isReview: currentReviewState === 'review'
+    });
+  }
   
   statItems.forEach(item => {
     const statDiv = document.createElement('div');
-    statDiv.className = 'text-gray-600';
+    statDiv.className = 'stats-item';
     
     const label = document.createElement('div');
     label.className = 'text-sm mb-2';
     label.textContent = item.label;
     
     const value = document.createElement('div');
-    value.className = 'text-3xl font-semibold';
+    value.className = item.isReview ? 
+      'text-3xl font-semibold text-red-600' : 
+      'text-3xl font-semibold';
     value.textContent = item.value;
     
     statDiv.appendChild(label);
     statDiv.appendChild(value);
     statsContent.appendChild(statDiv);
   });
-  
+
   stats.appendChild(statsContent);
 
   // 导出按钮

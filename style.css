@@ -114,13 +114,13 @@ body {
 
 #checkboxArea, #radioArea, .bg-gray-50 {
   border-radius: 1rem; /* 增大区块圆角 */
-  background: linear-gradient(120deg, #f8f9fa 0%, #f1f3f5 100%);
+  background: #f8f8f8 !important; /* 覆盖原有的背景色 */
   background-size: 200% 200%;
   animation: gradientBG 15s ease infinite;
 }
 
 .bg-gray-50 {
-  background: linear-gradient(120deg, #f8f9fa 0%, #f1f3f5 100%);
+  background: #f8f8f8 !important; /* 覆盖原有的背景色 */
   background-size: 200% 200%;
   animation: gradientBG 15s ease infinite;
 }
@@ -313,4 +313,112 @@ button:active {
 
 .file-upload input[type="file"] {
   display: none;
+}
+
+/* 统一卡片面板样式 */
+.card-panel {
+  border-radius: 1rem;  /* 增大圆角 */
+  background: #f8f8f8;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02), 
+             0 4px 8px rgba(0, 0, 0, 0.02);  /* 更细腻的阴影 */
+  transition: box-shadow 0.2s ease-in-out;    /* 添加过渡效果 */
+}
+
+.card-panel:hover {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.04), 
+             0 6px 12px rgba(0, 0, 0, 0.02);  /* 悬停时加深阴影 */
+}
+
+/* 修改已有的样式 */
+#checkboxArea, #radioArea, #subjectArea, #actionArea {
+  background: none !important;  /* 移除之前的背景样式 */
+}
+
+/* 修改已有的样式 */
+#checkboxArea, #radioArea, #subjectArea, #actionArea {
+  background: #f8f8f8 !important; /* 覆盖原有的背景色 */
+}
+
+/* 科目选择区域的特定样式 */
+#subjectArea {
+  height: 18rem;
+  overflow: hidden; /* 防止内容溢出 */
+}
+
+#subjectArea > div:last-child {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+  margin-top: 1rem;
+  height: calc(100% - 70px); /* 减去标题区域高度 */
+  overflow-y: auto; /* 内容过多时可滚动 */
+}
+
+#subjectArea > div:last-child > div {
+  height: 45px; /* 固定每个按钮的高度 */
+  margin: 0 !important;
+}
+
+#subjectArea > div:last-child > div label {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  padding: 0 1rem;
+}
+
+/* 移除之前不正确的space-y类相关样式 */
+#subjectArea .space-y-3 {
+  margin: 0 !important;
+}
+
+/* 移除原有的背景渐变 */
+.bg-gray-50 {
+  background: #f8f8f8 !important;
+}
+
+/* 轮换按钮样式 */
+.rotate-btn {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem;
+  background: #f1f1f1;
+  border-radius: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.rotate-btn:hover {
+  background: #e5e5e5;
+}
+
+.rotate-btn .status {
+  font-size: 0.875rem;
+  color: #666;
+}
+
+.rotate-btn .status.review {
+  color: #dc2626;
+  font-weight: 500;
+}
+
+/* 修改结果页面的统计卡片样式 */
+.stats-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.stats-item .status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  font-size: 0.875rem;
+  background: #f3f4f6;
+}
+
+.stats-item .status-badge.review {
+  background: #fee2e2;
+  color: #dc2626;
 }
