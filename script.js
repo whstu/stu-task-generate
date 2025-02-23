@@ -6,11 +6,18 @@ let subjects = [];
 async function loadNames() {
   NProgress.start();
   try {
-    const response = await fetch('data/namelist.txt');
-    const text = await response.text();
-    names = text.split('\n')
-      .map(name => name.trim())
-      .filter(name => name.length > 0);
+    // 先尝试从本地存储加载
+    const storedNames = localStorage.getItem('customNames');
+    if (storedNames) {
+      names = JSON.parse(storedNames);
+    } else {
+      // 如果没有本地存储，则从文件加载
+      const response = await fetch('data/namelist.txt');
+      const text = await response.text();
+      names = text.split('\n')
+        .map(name => name.trim())
+        .filter(name => name.length > 0);
+    }
     generateCheckboxes();
   } catch (error) {
     console.error('加载人名列表失败:', error);
@@ -337,6 +344,7 @@ document.addEventListener('DOMContentLoaded', async function() {
   } finally {
     NProgress.done();
   }
+  createDebugPanel();
 });
 
 // 生成按钮点击事件处理
@@ -725,4 +733,129 @@ document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape' && document.querySelector('.min-h-screen')) {
     hideResult();
   }
+  // 空格键打开调试面板
+  if (e.code === 'Space' && e.target === document.body) {
+    e.preventDefault();
+    toggleDebugPanel();
+  }
 });
+
+// 添加调试面板相关功能
+let debugPanel;
+
+function createDebugPanel() {
+  debugPanel = document.createElement('div');
+  debugPanel.className = 'debug-panel';
+  debugPanel.innerHTML = `
+    <div class="close-btn" onclick="toggleDebugPanel(false)">×</div>
+    <h2 class="text-2xl font-bold mb-6">调试面板</h2>
+    
+    <div class="debug-section">
+      <h3>名单管理</h3>
+      <div class="space-y-4">
+        <div>
+          <label class="file-upload">
+            <input type="file" accept=".txt" onchange="handleFileUpload(event)">
+            <i class="fas fa-upload mr-2"></i> 导入本地名单
+          </label>
+        </div>
+        <button onclick="exportCurrentNames()" class="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors">
+          导出当前名单
+        </button>
+        <button onclick="clearStoredNames()" class="px-4 py-2 bg-red-100 rounded-lg hover:bg-red-200 transition-colors">
+          清除缓存名单
+        </button>
+      </div>
+    </div>
+    
+    <div class="debug-section">
+      <h3>缓存信息</h3>
+      <div id="cacheInfo" class="text-sm text-gray-600">
+        加载中...
+      </div>
+    </div>
+  `;
+  
+  document.body.appendChild(debugPanel);
+  updateCacheInfo();
+}
+
+function toggleDebugPanel(show = true) {
+  if (!debugPanel) {
+    createDebugPanel();
+  }
+  debugPanel.classList.toggle('show', show);
+}
+
+// 处理本地文件上传
+async function handleFileUpload(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  try {
+    const text = await file.text();
+    const newNames = text.split('\n')
+      .map(name => name.trim())
+      .filter(name => name.length > 0);
+    
+    if (newNames.length === 0) {
+      alert('文件内容为空');
+      return;
+    }
+
+    // 保存到本地存储
+    localStorage.setItem('customNames', JSON.stringify(newNames));
+    
+    // 更新当前名单
+    names = newNames;
+    
+    // 重新生成选择框
+    const checkboxArea = document.getElementById('checkboxArea');
+    checkboxArea.innerHTML = '';
+    generateCheckboxes();
+    
+    updateCacheInfo();
+    alert('名单导入成功');
+  } catch (error) {
+    console.error('文件读取失败:', error);
+    alert('文件读取失败');
+  }
+}
+
+// 导出当前名单
+function exportCurrentNames() {
+  const content = names.join('\n');
+  const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `namelist_${new Date().toISOString().slice(0,10)}.txt`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+// 清除存储的名单
+function clearStoredNames() {
+  if (confirm('确定要清除缓存的名单吗？')) {
+    localStorage.removeItem('customNames');
+    location.reload();
+  }
+}
+
+// 更新缓存信息显示
+function updateCacheInfo() {
+  const cacheInfo = document.getElementById('cacheInfo');
+  if (!cacheInfo) return;
+
+  const customNames = localStorage.getItem('customNames');
+  const lastSelections = sessionStorage.getItem('lastSelections');
+
+  cacheInfo.innerHTML = `
+    <div class="space-y-2">
+      <div>自定义名单: ${customNames ? JSON.parse(customNames).length + '个名字' : '无'}</div>
+      <div>上次选择: ${lastSelections ? '已保存' : '无'}</div>
+    </div>
+  `;
+}
