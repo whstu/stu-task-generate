@@ -11,6 +11,9 @@ const REVIEW_LABELS = {
 };
 let currentReviewState = 'none';
 
+// 在文件顶部添加新的状态变量
+let correctionRatio = 1; // 默认错一改一
+
 // 从txt文件加载人名
 async function loadNames() {
   NProgress.start();
@@ -185,7 +188,42 @@ function generateRadios() {
     const label = document.createElement('label');
     label.htmlFor = radio.id;
     label.className = 'block p-2 border border-gray-200 rounded-lg cursor-pointer transition-all hover:border-gray-300 text-sm';
-    label.innerText = action;
+    
+    // 如果是听写改错，添加比例输入框
+    if (action === '听写改错') {
+      const ratioWrapper = document.createElement('div');
+      ratioWrapper.className = 'flex items-center justify-between';
+      ratioWrapper.innerHTML = `
+        <span>${action}</span>
+        <div class="flex items-center space-x-2">
+          <span class="text-gray-500 text-xs">错一改</span>
+          <input type="number" 
+            class="correction-ratio w-12 px-1 py-0.5 text-sm border border-gray-200 rounded"
+            min="1" 
+            value="${correctionRatio}"
+            onClick="event.stopPropagation()"
+          >
+        </div>
+      `;
+      label.appendChild(ratioWrapper);
+      
+      // 添加输入框的事件监听
+      setTimeout(() => {
+        const input = div.querySelector('.correction-ratio');
+        if (input) {
+          input.addEventListener('change', (e) => {
+            e.stopPropagation();
+            correctionRatio = Math.max(1, parseInt(e.target.value) || 1);
+            e.target.value = correctionRatio;
+          });
+          input.addEventListener('click', (e) => {
+            e.stopPropagation();
+          });
+        }
+      }, 0);
+    } else {
+      label.textContent = action;
+    }
 
     div.appendChild(radio);
     div.appendChild(label);
@@ -281,7 +319,8 @@ function saveSelections() {
     names: Array.from(document.querySelectorAll('.checkbox-custom:checked')).map(cb => cb.value),
     action: document.querySelector('input[name="action"]:checked')?.value,
     subject: document.querySelector('input[name="subject"]:checked')?.value,
-    reviewState: currentReviewState
+    reviewState: currentReviewState,
+    correctionRatio: correctionRatio // 添加错改比例
   };
   sessionStorage.setItem('lastSelections', JSON.stringify(selections));
 }
@@ -322,6 +361,15 @@ function restoreSelections() {
     if (statusElement) {
       statusElement.textContent = REVIEW_LABELS[currentReviewState];
       statusElement.className = 'status' + (currentReviewState === 'review' ? ' review' : '');
+    }
+  }
+
+  // 恢复错改比例
+  if (selections.correctionRatio) {
+    correctionRatio = selections.correctionRatio;
+    const ratioInput = document.querySelector('.correction-ratio');
+    if (ratioInput) {
+      ratioInput.value = correctionRatio;
     }
   }
   
@@ -489,6 +537,14 @@ function showResultModal(selectedNames, selectedAction, selectedSubject) {
     { label: '科目', value: selectedSubject },
     { label: '参与人数', value: `${selectedNames.length}人` }
   ];
+
+  // 如果是听写改错，添加错改比例
+  if (selectedAction === '听写改错') {
+    statItems.splice(1, 0, {
+      label: '错改比例',
+      value: `1:${correctionRatio}`
+    });
+  }
 
   // 如果有后续操作，添加到统计信息中
   if (currentReviewState !== 'none') {

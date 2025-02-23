@@ -422,3 +422,33 @@ button:active {
   background: #fee2e2;
   color: #dc2626;
 }
+
+/* 添加错改比例输入框样式 */
+.correction-ratio {
+  background: transparent;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.375rem;
+  transition: all 0.2s;
+}
+
+.correction-ratio:focus {
+  outline: none;
+  border-color: #000;
+  background: white;
+}
+
+.correction-ratio::-webkit-inner-spin-button,
+.correction-ratio::-webkit-outer-spin-button {
+  opacity: 1;
+  height: 1.5em;
+}
+
+/* 更新important按钮样式以适应输入框 */
+.radio-custom + label {
+  padding-right: 0.75rem !important;
+}
+
+.radio-custom:checked + label .correction-ratio {
+  border-color: #000;
+  background: white;
+}
