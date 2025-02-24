@@ -454,36 +454,19 @@ document.addEventListener('DOMContentLoaded', async function() {
   createDebugPanel();
 });
 
-// 生成按钮点击事件处理
+// 修改生成按钮点击事件处理函数中的获取选中人员逻辑
 document.getElementById('generateButton').addEventListener('click', async function() {
   NProgress.start();
   try {
-    // 获取选中的人名
-    const selectedNames = [];
-    names.forEach((name, index) => {
-      const checkbox = document.getElementById('person_' + index);
-      if (checkbox && checkbox.checked) {
-        selectedNames.push(name);
-      }
-    });
+    // 修改获取选中人名的逻辑
+    const selectedNames = Array.from(document.querySelectorAll('.checkbox-custom:checked'))
+      .map(checkbox => checkbox.value);
 
     // 获取选中的操作
-    let selectedAction = null;
-    const radios = document.getElementsByName('action');
-    radios.forEach(function(radio) {
-      if (radio.checked) {
-        selectedAction = radio.value;
-      }
-    });
+    const selectedAction = document.querySelector('input[name="action"]:checked')?.value;
 
     // 获取选中的科目
-    let selectedSubject = null;
-    const subjectRadios = document.getElementsByName('subject');
-    subjectRadios.forEach(function(radio) {
-      if (radio.checked) {
-        selectedSubject = radio.value;
-      }
-    });
+    const selectedSubject = document.querySelector('input[name="subject"]:checked')?.value;
 
     if (selectedNames.length === 0 || !selectedAction || !selectedSubject) {
       alert('请选择至少一个人名、一个操作和一个科目');
