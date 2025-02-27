@@ -1,33 +1,16 @@
 {
-<<<<<<< HEAD
-  "name": "tasklist-for-class",
+  "name": "student_task_generate",
   "version": "1.0.0",
   "description": "任务清单分配系统",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js",
-    "dev": "nodemon server.js"
+    "dev": "vite --debug",
+    "build": "vite build"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "dependencies": {
-    "express": "^4.21.2"
-  },
   "devDependencies": {
-    "nodemon": "^3.0.1"
+    "vite": "^4.0.0"
   }
-=======
-  "name": "StudentsTaskGenerate",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC"
->>>>>>> ca4eb01 (🎉 init(初始化项目):)
 }
