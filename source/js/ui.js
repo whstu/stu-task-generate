@@ -1,4 +1,6 @@
-function createCheckbox(line) {
+import anime from 'animejs';
+
+export function createCheckbox(line) {
     const container = document.createElement('div');
     container.className = 'checkbox-btn';
     const checkbox = document.createElement('input');
@@ -33,10 +35,23 @@ function createCheckbox(line) {
     return container;
 }
 
-function displayData(lines, elementId) {
+export function displayData(lines, elementId) {
     const container = document.getElementById(elementId);
+    container.innerHTML = '';
+    
+    // 添加特定的容器类
+    if (elementId === 'actions') {
+        container.classList.add('actions-container');
+    } else if (elementId === 'subjects') {
+        container.classList.add('subjects-container');
+    } else if (elementId === 'namelist') {
+        container.classList.add('namelist-container');
+    }
+    
     lines.forEach(line => {
-        const checkbox = createCheckbox(line);
-        container.appendChild(checkbox);
+        if (line.trim()) {  // 只处理非空行
+            const checkbox = createCheckbox(line);
+            container.appendChild(checkbox);
+        }
     });
 }

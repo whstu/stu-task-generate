@@ -33,7 +33,6 @@
     font-size: 1rem;
     height: 100%;
     width: 100%;
-    background-color: #f8fafc;
 }
 
 .checkbox-btn:hover {
@@ -124,4 +123,29 @@
     0% { transform: scale(1); }
     50% { transform: scale(0.95); }
     100% { transform: scale(1); }
+}
+
+/* 右侧按钮样式 */
+.actions-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.subjects-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+}
+
+.actions-container .checkbox-btn,
+.subjects-container .checkbox-btn {
+    padding: 0.5rem;
+    font-size: 0.9rem;
+    min-height: 2.5rem;
+}
+
+/* 移除之前的通用内边距 */
+#actions, #subjects {
+    padding: 0.75rem !important;
 }

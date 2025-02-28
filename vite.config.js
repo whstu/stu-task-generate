@@ -1,11 +1,12 @@
-const { defineConfig } = require('vite');
+import { defineConfig } from 'vite'
 
-module.exports = defineConfig({
-  logLevel: 'info', // 输出较详细的调试信息；可使用 'debug' 获得更多日志
-  server: {
-    open: true
-  },
+export default defineConfig({
   build: {
-    outDir: 'dist' // 部署时使用的静态文件目录
+    outDir: 'dist',
+    rollupOptions: {
+      input: {
+        main: 'index.html'
+      }
+    }
   }
-});
+})
