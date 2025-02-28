@@ -10,11 +10,50 @@
     <link href="https://cdn.jsdelivr.net/npm/daisyui@2.51.5/dist/full.css" rel="stylesheet">
     <!-- 引入 Fontawesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- 引入 Anime.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
     <!-- 添加favicon -->
     <link rel="icon" media="(prefers-color-scheme: light)" href="source/favicon/list-check-3.svg">
     <link rel="icon" media="(prefers-color-scheme: dark)" href="source/favicon/list-check-3-dark.svg">
+    <!-- 引入自定义样式 -->
+    <link rel="stylesheet" href="source/css/style.css">
 </head>
-<body>
-    <h1 class="text-3xl font-bold underline">Hello, world!</h1>
+<body class="min-h-screen bg-base-200">
+    <div class="container mx-auto w-[85%] h-screen p-6">
+        <div class="grid grid-cols-4 gap-4 h-[calc(100vh-3rem)]">
+            <!-- 左侧区域：3列 -->
+            <div class="col-span-3 grid grid-rows-[60%_40%] gap-4">
+                <div class="card">
+                    <div class="card-title"><span class="num">1</span>学生名单</div>
+                    <div id="namelist" class="namelist-container"></div>
+                </div>
+                <div class="card">
+                    <div class="card-title"><span class="num">2</span>生成结果</div>
+                    <div id="info" class="p-4"></div>
+                </div>
+            </div>
+            <!-- 右侧区域：1列 -->
+            <div class="col-span-1 grid grid-rows-[35%_45%_20%] gap-4">
+                <div class="card">
+                    <div class="card-title"><span class="num">3</span>待处理项目</div>
+                    <div id="actions" class="p-4"></div>
+                </div>
+                <div class="card">
+                    <div class="card-title"><span class="num">4</span>学科选择</div>
+                    <div id="subjects" class="p-4"></div>
+                </div>
+                <div class="card">
+                    <div id="buttons" class="p-4 flex flex-col justify-center h-full">
+                        <button id="submitBtn" class="btn btn-primary btn-lg mb-2">提交</button>
+                        <button id="resetBtn" class="btn btn-secondary btn-lg">重置</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="source/js/data.js"></script>
+    <script src="source/js/ui.js"></script>
+    <script src="source/js/animation.js"></script>
+    <script src="source/js/main.js"></script>
 </body>
 </html>
