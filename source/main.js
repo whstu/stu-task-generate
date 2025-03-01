@@ -1,80 +1,129 @@
-// 定义人名数组和任务数组
-const names = ["张三", "李四", "王五"]; // 可按需扩展
-const tasks = ["找老师", "听写改错", "其他任务"]; // 可按需扩展
+// 从文件读取数据的函数
+async function loadTextFile(filePath) {
+    try {
+        const response = await fetch(filePath);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const text = await response.text();
+        return text.split('\n').filter(line => line.trim());
+    } catch (error) {
+        console.error(`加载文件 ${filePath} 失败:`, error);
+        throw error;
+    }
+}
 
-// 获取对应的容器
-const checkboxArea = document.getElementById("checkbox-area");
-const radioArea = document.getElementById("radio-area");
-const generateBtn = document.getElementById("generate-btn");
+// 初始化UI
+function initUI() {
+    // 显示加载状态
+    const loadingMsg = document.createElement('div');
+    loadingMsg.id = 'loading-message';
+    loadingMsg.textContent = '正在加载数据...';
+    document.body.insertBefore(loadingMsg, document.body.firstChild);
 
-// 生成人名复选框
-names.forEach((name, index) => {
-  // 创建复选框输入
-  const checkbox = document.createElement("input");
-  checkbox.type = "checkbox";
-  checkbox.id = `name-${index}`;
-  checkbox.value = name;
-  checkbox.name = "student";
+    // 加载所有数据
+    Promise.all([
+        loadTextFile('./source/data/namelist.txt'),
+        loadTextFile('./source/data/actions.txt'),
+        loadTextFile('./source/data/subjects.txt')
+    ]).then(([names, tasks, subjects]) => {
+        // 移除加载消息
+        document.getElementById('loading-message').remove();
+        
+        // 获取对应的容器
+        const checkboxArea = document.getElementById("checkbox-area");
+        const radioArea = document.getElementById("radio-area");
+        const subjectArea = document.getElementById("subject-area");
+        const generateBtn = document.getElementById("generate-btn");
 
-  // 创建对应的标签
-  const label = document.createElement("label");
-  label.htmlFor = `name-${index}`;
-  label.textContent = name;
+        // 生成人名复选框
+        names.forEach((name, index) => {
+            const checkbox = document.createElement("input");
+            checkbox.type = "checkbox";
+            checkbox.id = `name-${index}`;
+            checkbox.value = name;
+            checkbox.name = "student";
 
-  // 添加到复选框区域
-  checkboxArea.appendChild(checkbox);
-  checkboxArea.appendChild(label);
-  checkboxArea.appendChild(document.createElement("br"));
-});
+            const label = document.createElement("label");
+            label.htmlFor = `name-${index}`;
+            label.textContent = name;
 
-// 生成任务单选框
-tasks.forEach((task, index) => {
-  // 创建单选框输入
-  const radio = document.createElement("input");
-  radio.type = "radio";
-  radio.id = `task-${index}`;
-  radio.value = task;
-  radio.name = "task";
+            checkboxArea.appendChild(checkbox);
+            checkboxArea.appendChild(label);
+            checkboxArea.appendChild(document.createElement("br"));
+        });
 
-  // 创建对应的标签
-  const label = document.createElement("label");
-  label.htmlFor = `task-${index}`;
-  label.textContent = task;
+        // 生成任务单选框
+        tasks.forEach((task, index) => {
+            const radio = document.createElement("input");
+            radio.type = "radio";
+            radio.id = `task-${index}`;
+            radio.value = task;
+            radio.name = "task";
 
-  // 添加到单选框区域
-  radioArea.appendChild(radio);
-  radioArea.appendChild(label);
-  radioArea.appendChild(document.createElement("br"));
-});
+            const label = document.createElement("label");
+            label.htmlFor = `task-${index}`;
+            label.textContent = task;
 
-// 生成按钮点击事件
-generateBtn.addEventListener("click", () => {
-  // 获取选中的人名
-  const selectedNames = Array.from(
-    document.querySelectorAll('input[name="student"]:checked')
-  ).map((input) => input.value);
-  // 获取选中的任务
-  const selectedTaskInput = document.querySelector(
-    'input[name="task"]:checked'
-  );
-  const selectedTask = selectedTaskInput ? selectedTaskInput.value : "";
+            radioArea.appendChild(radio);
+            radioArea.appendChild(label);
+            radioArea.appendChild(document.createElement("br"));
+        });
 
-  // 如果未选择人名或任务则提示
-  if (selectedNames.length === 0 || !selectedTask) {
-    alert("请至少选择一个人名和一个任务！");
-    return;
-  }
+        // 生成科目单选框
+        subjects.forEach((subject, index) => {
+            const radio = document.createElement("input");
+            radio.type = "radio";
+            radio.id = `subject-${index}`;
+            radio.value = subject;
+            radio.name = "subject";
 
-  // 清空页面，并生成结果展示区域
-  document.body.innerHTML = "";
-  const resultTitle = document.createElement("h2");
-  resultTitle.textContent = "生成结果:";
-  document.body.appendChild(resultTitle);
+            const label = document.createElement("label");
+            label.htmlFor = `subject-${index}`;
+            label.textContent = subject;
 
-  // 展示每位选中人名和任务
-  selectedNames.forEach((name) => {
-    const para = document.createElement("p");
-    para.textContent = `${name} 需要 ${selectedTask}`;
-    document.body.appendChild(para);
-  });
-});
+            subjectArea.appendChild(radio);
+            subjectArea.appendChild(label);
+            subjectArea.appendChild(document.createElement("br"));
+        });
+
+        // 生成按钮点击事件
+        generateBtn.addEventListener("click", () => {
+            const selectedNames = Array.from(
+                document.querySelectorAll('input[name="student"]:checked')
+            ).map((input) => input.value);
+
+            const selectedTaskInput = document.querySelector('input[name="task"]:checked');
+            const selectedTask = selectedTaskInput ? selectedTaskInput.value : "";
+
+            const selectedSubjectInput = document.querySelector('input[name="subject"]:checked');
+            const selectedSubject = selectedSubjectInput ? selectedSubjectInput.value : "";
+
+            if (selectedNames.length === 0 || !selectedTask || !selectedSubject) {
+                alert("请至少选择一个人名、一个任务和一个科目！");
+                return;
+            }
+
+            document.body.innerHTML = "";
+            const resultTitle = document.createElement("h2");
+            resultTitle.textContent = "生成结果:";
+            document.body.appendChild(resultTitle);
+
+            selectedNames.forEach((name) => {
+                const para = document.createElement("p");
+                para.textContent = `${name} 需要 ${selectedSubject}${selectedTask}`;
+                document.body.appendChild(para);
+            });
+        });
+    }).catch(error => {
+        console.error('加载数据失败:', error);
+        const loadingMsg = document.getElementById('loading-message');
+        if (loadingMsg) {
+            loadingMsg.textContent = '加载数据失败，请确保数据文件存在且路径正确！';
+            loadingMsg.style.color = 'red';
+        }
+    });
+}
+
+// 页面加载完成后初始化
+document.addEventListener('DOMContentLoaded', initUI);
