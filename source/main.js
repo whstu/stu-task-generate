@@ -1,129 +1,125 @@
-// 从文件读取数据的函数
+// 通用的文件加载函数
 async function loadTextFile(filePath) {
     try {
         const response = await fetch(filePath);
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const text = await response.text();
-        return text.split('\n').filter(line => line.trim());
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        return (await response.text()).split('\n').filter(line => line.trim());
     } catch (error) {
         console.error(`加载文件 ${filePath} 失败:`, error);
         throw error;
     }
 }
 
+// 通用的按钮创建函数
+function createButton(config) {
+    const { id, value, name, type = 'checkbox' } = config;
+    const label = document.createElement("label");
+    label.className = "label cursor-pointer justify-start gap-2";
+
+    const input = document.createElement("input");
+    input.type = type;
+    input.className = "hidden";
+    input.id = id;
+    input.value = value;
+    input.name = name;
+
+    const button = document.createElement("div");
+    button.className = "btn btn-outline btn-sm w-full";
+    button.textContent = value;
+
+    // 统一的点击事件处理
+    button.addEventListener('click', () => {
+        if (type === 'radio') {
+            // 单选逻辑
+            document.querySelectorAll(`input[name="${name}"]`).forEach(radio => {
+                radio.parentElement.querySelector('div').classList.remove('btn-active');
+            });
+            input.checked = true;
+        } else {
+            // 多选逻辑
+            input.checked = !input.checked;
+        }
+        button.classList.toggle('btn-active');
+    });
+
+    return Object.assign(label, {
+        appendChild: label.appendChild.bind(label),
+        elements: [input, button].forEach(el => label.appendChild(el))
+    });
+}
+
+// 批量创建按钮并添加到容器
+function createButtons(items, containerSelector, type, name) {
+    const container = document.getElementById(containerSelector);
+    items.forEach((item, index) => {
+        container.appendChild(
+            createButton({
+                id: `${name}-${index}`,
+                value: item,
+                name: name,
+                type: type
+            })
+        );
+    });
+}
+
+// 生成结果界面
+function showResults(selectedNames, selectedSubject, selectedTask) {
+    document.body.innerHTML = `
+        <div class="container mx-auto p-4">
+            <h2 class="text-2xl font-bold mb-4">生成结果:</h2>
+            <div id="results" class="space-y-2"></div>
+            <button onclick="location.reload()" class="btn btn-primary mt-8 w-full">返回</button>
+        </div>
+    `;
+
+    const resultsDiv = document.getElementById("results");
+    selectedNames.forEach(name => {
+        resultsDiv.appendChild(Object.assign(document.createElement("div"), {
+            className: "card bg-base-200 p-4",
+            textContent: `${name} 需要 ${selectedSubject}${selectedTask}`
+        }));
+    });
+}
+
 // 初始化UI
 function initUI() {
-    // 显示加载状态
-    const loadingMsg = document.createElement('div');
-    loadingMsg.id = 'loading-message';
-    loadingMsg.textContent = '正在加载数据...';
+    const loadingMsg = Object.assign(document.createElement('div'), {
+        id: 'loading-message',
+        textContent: '正在加载数据...'
+    });
     document.body.insertBefore(loadingMsg, document.body.firstChild);
 
-    // 加载所有数据
     Promise.all([
         loadTextFile('./source/data/namelist.txt'),
         loadTextFile('./source/data/actions.txt'),
         loadTextFile('./source/data/subjects.txt')
     ]).then(([names, tasks, subjects]) => {
-        // 移除加载消息
-        document.getElementById('loading-message').remove();
+        loadingMsg.remove();
         
-        // 获取对应的容器
-        const checkboxArea = document.getElementById("checkbox-area");
-        const radioArea = document.getElementById("radio-area");
-        const subjectArea = document.getElementById("subject-area");
-        const generateBtn = document.getElementById("generate-btn");
+        // 批量创建按钮
+        createButtons(names, "checkbox-area", "checkbox", "student");
+        createButtons(subjects, "subject-area", "radio", "subject");
+        createButtons(tasks, "radio-area", "radio", "task");
 
-        // 生成人名复选框
-        names.forEach((name, index) => {
-            const checkbox = document.createElement("input");
-            checkbox.type = "checkbox";
-            checkbox.id = `name-${index}`;
-            checkbox.value = name;
-            checkbox.name = "student";
+        // 处理生成按钮点击事件
+        document.getElementById("generate-btn").addEventListener("click", () => {
+            const selectedNames = Array.from(document.querySelectorAll('input[name="student"]:checked')).map(input => input.value);
+            const selectedSubject = document.querySelector('input[name="subject"]:checked')?.value;
+            const selectedTask = document.querySelector('input[name="task"]:checked')?.value;
 
-            const label = document.createElement("label");
-            label.htmlFor = `name-${index}`;
-            label.textContent = name;
-
-            checkboxArea.appendChild(checkbox);
-            checkboxArea.appendChild(label);
-            checkboxArea.appendChild(document.createElement("br"));
-        });
-
-        // 生成任务单选框
-        tasks.forEach((task, index) => {
-            const radio = document.createElement("input");
-            radio.type = "radio";
-            radio.id = `task-${index}`;
-            radio.value = task;
-            radio.name = "task";
-
-            const label = document.createElement("label");
-            label.htmlFor = `task-${index}`;
-            label.textContent = task;
-
-            radioArea.appendChild(radio);
-            radioArea.appendChild(label);
-            radioArea.appendChild(document.createElement("br"));
-        });
-
-        // 生成科目单选框
-        subjects.forEach((subject, index) => {
-            const radio = document.createElement("input");
-            radio.type = "radio";
-            radio.id = `subject-${index}`;
-            radio.value = subject;
-            radio.name = "subject";
-
-            const label = document.createElement("label");
-            label.htmlFor = `subject-${index}`;
-            label.textContent = subject;
-
-            subjectArea.appendChild(radio);
-            subjectArea.appendChild(label);
-            subjectArea.appendChild(document.createElement("br"));
-        });
-
-        // 生成按钮点击事件
-        generateBtn.addEventListener("click", () => {
-            const selectedNames = Array.from(
-                document.querySelectorAll('input[name="student"]:checked')
-            ).map((input) => input.value);
-
-            const selectedTaskInput = document.querySelector('input[name="task"]:checked');
-            const selectedTask = selectedTaskInput ? selectedTaskInput.value : "";
-
-            const selectedSubjectInput = document.querySelector('input[name="subject"]:checked');
-            const selectedSubject = selectedSubjectInput ? selectedSubjectInput.value : "";
-
-            if (selectedNames.length === 0 || !selectedTask || !selectedSubject) {
+            if (!selectedNames.length || !selectedTask || !selectedSubject) {
                 alert("请至少选择一个人名、一个任务和一个科目！");
                 return;
             }
 
-            document.body.innerHTML = "";
-            const resultTitle = document.createElement("h2");
-            resultTitle.textContent = "生成结果:";
-            document.body.appendChild(resultTitle);
-
-            selectedNames.forEach((name) => {
-                const para = document.createElement("p");
-                para.textContent = `${name} 需要 ${selectedSubject}${selectedTask}`;
-                document.body.appendChild(para);
-            });
+            showResults(selectedNames, selectedSubject, selectedTask);
         });
     }).catch(error => {
         console.error('加载数据失败:', error);
-        const loadingMsg = document.getElementById('loading-message');
-        if (loadingMsg) {
-            loadingMsg.textContent = '加载数据失败，请确保数据文件存在且路径正确！';
-            loadingMsg.style.color = 'red';
-        }
+        loadingMsg.textContent = '加载数据失败，请确保数据文件存在且路径正确！';
+        loadingMsg.style.color = 'red';
     });
 }
 
-// 页面加载完成后初始化
 document.addEventListener('DOMContentLoaded', initUI);

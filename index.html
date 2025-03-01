@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-cn">
+<html lang="zh-cn" data-theme="light">
 
 <head>
   <meta charset="UTF-8" />
@@ -13,23 +13,26 @@
   <title>Students Tasks Generate</title>
 </head>
 
-<body>
-  <header>
-    <h1>TasksGenerate</h1>
+<body class="container mx-auto p-4 min-h-screen bg-base-100">
+  <header class="mb-8">
+    <h1 class="text-4xl font-bold text-center">TasksGenerate</h1>
   </header>
-  <main>
-    <section id="checkbox-area">
-      <h3>选择学生：</h3>
+  <main class="space-y-8">
+    <section id="checkbox-area" class="card bg-base-200 p-6 border border-base-300 shadow-sm hover:shadow-md transition-shadow duration-200">
+      <h3 class="text-xl font-bold mb-4">选择学生：</h3>
+      <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-2"></div>
     </section>
-    <section id="subject-area">
-      <h3>选择科目：</h3>
+    <section id="subject-area" class="card bg-base-200 p-6 border border-base-300 shadow-sm hover:shadow-md transition-shadow duration-200">
+      <h3 class="text-xl font-bold mb-4">选择科目：</h3>
+      <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-2"></div>
     </section>
-    <section id="radio-area">
-      <h3>选择任务：</h3>
+    <section id="radio-area" class="card bg-base-200 p-6 border border-base-300 shadow-sm hover:shadow-md transition-shadow duration-200">
+      <h3 class="text-xl font-bold mb-4">选择任务：</h3>
+      <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-2"></div>
     </section>
   </main>
-  <footer>
-    <button id="generate-btn">生成</button>
+  <footer class="mt-8 pb-8">
+    <button id="generate-btn" class="btn btn-primary w-full">生成</button>
   </footer>
   <script src="source/main.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
