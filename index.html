@@ -9,6 +9,22 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script charset="UTF-8" id="LA_COLLECT" src="//sdk.51.la/js-sdk-pro.min.js"></script>
+  <script>LA.init({id:"3KgM8DcTJ5lUj4gb",ck:"3KgM8DcTJ5lUj4gb",screenRecord:true})</script>
+  <style>
+    .stats-icon {
+        position: fixed;
+        left: 20px;
+        bottom: -50px; /* 初始位置在屏幕下方 */
+        z-index: 1000;
+        opacity: 0;
+        transition: all 0.3s ease;
+    }
+    .stats-icon img {
+        width: 20px;
+        height: 20px;
+    }
+  </style>
 </head>
 <body class="bg-white h-screen p-6"> <!-- 增加页面内边距 -->
   <div class="h-full max-w-7xl mx-auto flex flex-col">
@@ -81,6 +97,19 @@
     </div>
   </div>
 
+  <a class="stats-icon" target="_blank" title="接入51LA数据分析" href="https://v6.51.la/land/3KgM8DcTJ5lUj4gb"><img src="https://sdk.51.la/icon/3-1.png"></a>
+
   <script src="script.js"></script>
+  <script>
+    // 添加动画效果
+    document.addEventListener('DOMContentLoaded', function() {
+        gsap.to('.stats-icon', {
+            bottom: '20px',
+            opacity: 1,
+            duration: 1,
+            ease: 'power2.out'
+        });
+    });
+  </script>
 </body>
 </html>
