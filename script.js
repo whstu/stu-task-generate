@@ -121,7 +121,7 @@ function generateCheckboxes() {
   nameGrid.className = 'checkbox-grid';
 
   // 按拼音排序
-  const sortedNames = [...names].sort((a, b) => a.localeCompare(b, 'zh-Hans-CN'));
+  const sortedNames = [...names];
   
   sortedNames.forEach((name, index) => {
     const div = document.createElement('div');
