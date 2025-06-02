@@ -479,29 +479,29 @@ document.getElementById('generateButton').addEventListener('click', async functi
   }
 });
 
-// 修改显示结果模态框函数
+// 修改显示结果模态框函数 - 重点优化卡片布局
 function showResultModal(selectedNames, selectedAction, selectedSubject) {
   saveSelections();
   
   document.body.innerHTML = '';
   
   const resultPage = document.createElement('div');
-  resultPage.className = 'min-h-screen bg-white p-6';
+  resultPage.className = 'min-h-screen bg-white p-4'; // 减小整体内边距
   resultPage.style.opacity = 0;
   
   const container = document.createElement('div');
-  container.className = 'max-w-7xl mx-auto space-y-8';
+  container.className = 'max-w-7xl mx-auto space-y-6'; // 减小间距
 
   // 标题栏
   const header = document.createElement('div');
-  header.className = 'flex items-center justify-between py-4';
+  header.className = 'flex items-center justify-between py-3'; // 减小内边距
   
   const title = document.createElement('h1');
-  title.className = 'text-3xl font-semibold text-black';
+  title.className = 'text-2xl font-semibold text-black'; // 减小标题大小
   title.textContent = '分组结果';
   
   const closeBtn = document.createElement('button');
-  closeBtn.className = 'text-2xl text-gray-600 hover:text-black transition-colors';
+  closeBtn.className = 'text-xl text-gray-600 hover:text-black transition-colors'; // 减小关闭按钮
   closeBtn.innerHTML = '<i class="fas fa-times"></i>';
   closeBtn.onclick = hideResult;
   
@@ -510,10 +510,10 @@ function showResultModal(selectedNames, selectedAction, selectedSubject) {
 
   // 统计信息
   const stats = document.createElement('div');
-  stats.className = 'bg-gray-50 rounded-xl p-8';
+  stats.className = 'bg-gray-50 rounded-lg p-4'; // 减小内边距和圆角
   
   const statsContent = document.createElement('div');
-  statsContent.className = 'flex items-center space-x-12';
+  statsContent.className = 'flex flex-wrap gap-4'; // 允许换行显示
   
   const statItems = [
     { label: '任务类型', value: selectedAction },
@@ -540,16 +540,16 @@ function showResultModal(selectedNames, selectedAction, selectedSubject) {
   
   statItems.forEach(item => {
     const statDiv = document.createElement('div');
-    statDiv.className = 'stats-item';
+    statDiv.className = 'stats-item min-w-[120px]'; // 设置最小宽度
     
     const label = document.createElement('div');
-    label.className = 'text-sm mb-2';
+    label.className = 'text-xs mb-1'; // 减小标签大小
     label.textContent = item.label;
     
     const value = document.createElement('div');
     value.className = item.isReview ? 
-      'text-3xl font-semibold text-red-600' : 
-      'text-3xl font-semibold';
+      'text-xl font-semibold text-red-600' : // 减小值大小
+      'text-xl font-semibold';
     value.textContent = item.value;
     
     statDiv.appendChild(label);
@@ -561,40 +561,33 @@ function showResultModal(selectedNames, selectedAction, selectedSubject) {
 
   // 导出按钮
   const exportBtn = document.createElement('div');
-  exportBtn.className = 'flex items-center space-x-4';
+  exportBtn.className = 'flex justify-center'; // 居中按钮
   
   const exportBtnInner = document.createElement('button');
-  exportBtnInner.className = 'flex items-center px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors';
-  exportBtnInner.innerHTML = '<i class="fas fa-file-text mr-2"></i>导出文本文件';
+  exportBtnInner.className = 'flex items-center px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors text-sm'; // 减小按钮尺寸
+  exportBtnInner.innerHTML = '<i class="fas fa-file-text mr-2 text-sm"></i>导出文本文件';
   exportBtnInner.onclick = () => exportAsTxt(selectedAction, selectedNames, selectedSubject);
   
   exportBtn.appendChild(exportBtnInner);
 
-  // 结果列表
+  // 结果列表 - 重点优化：每行显示更多卡片
   const resultGrid = document.createElement('div');
-  resultGrid.className = 'grid gap-4';
-  resultGrid.style.gridTemplateColumns = 'repeat(auto-fill, minmax(280px, 1fr))';
+  resultGrid.className = 'grid gap-3'; // 减小卡片间隙
+  // 增加每行显示的卡片数量
+  resultGrid.style.gridTemplateColumns = 'repeat(auto-fill, minmax(160px, 1fr))'; 
   
   // 预先创建所有卡片但初始设置为不可见
   selectedNames.forEach(name => {
     const card = document.createElement('div');
-    card.className = 'bg-gray-50 rounded-xl p-6';
-    card.style.opacity = '0';  // 初始不可见
-    card.style.transform = 'translateY(20px)';  // 初始位置偏移
+    card.className = 'bg-gray-50 rounded-xl p-3 flex items-center justify-center'; // 减小内边距，居中内容
+    card.style.opacity = '0';
+    card.style.transform = 'translateY(20px)';
     
     const nameDiv = document.createElement('div');
-    nameDiv.className = 'text-2xl font-medium mb-3';  // 增大名字大小
+    nameDiv.className = 'text-xl font-medium text-center'; // 保持名字大小但居中显示
     nameDiv.textContent = name;
     
-    const infoDiv = document.createElement('div');
-    infoDiv.className = 'text-gray-600 flex items-center text-sm';  // 增大任务信息大小
-    infoDiv.innerHTML = `
-      <i class="fas fa-arrow-right mr-3"></i>
-      <span>${selectedSubject} - ${selectedAction}</span>
-    `;
-    
     card.appendChild(nameDiv);
-    card.appendChild(infoDiv);
     resultGrid.appendChild(card);
   });
 
@@ -634,7 +627,7 @@ function showResultModal(selectedNames, selectedAction, selectedSubject) {
     });
 
     // 统计数字
-    tl.from(statsContent.querySelectorAll('.text-3xl'), {
+    tl.from(statsContent.querySelectorAll('.text-xl'), {
       y: 20,
       opacity: 0,
       duration: 0.4,
@@ -656,8 +649,8 @@ function showResultModal(selectedNames, selectedAction, selectedSubject) {
       y: 0,
       duration: 0.5,
       stagger: {
-        amount: 0.8,  // 控制整体动画持续时间
-        grid: [4, 4], // 网格布局
+        amount: 0.8,
+        grid: [5, 4], // 增加网格密度
         from: 'start',
         ease: 'power2.out'
       }
