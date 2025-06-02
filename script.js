@@ -486,22 +486,22 @@ function showResultModal(selectedNames, selectedAction, selectedSubject) {
   document.body.innerHTML = '';
   
   const resultPage = document.createElement('div');
-  resultPage.className = 'min-h-screen bg-white p-4'; // 减小整体内边距
+  resultPage.className = 'min-h-screen bg-white p-4';
   resultPage.style.opacity = 0;
   
   const container = document.createElement('div');
-  container.className = 'max-w-7xl mx-auto space-y-6'; // 减小间距
+  container.className = 'max-w-7xl mx-auto space-y-6';
 
   // 标题栏
   const header = document.createElement('div');
-  header.className = 'flex items-center justify-between py-3'; // 减小内边距
+  header.className = 'flex items-center justify-between py-3';
   
   const title = document.createElement('h1');
-  title.className = 'text-2xl font-semibold text-black'; // 减小标题大小
+  title.className = 'text-2xl font-semibold text-black';
   title.textContent = '分组结果';
   
   const closeBtn = document.createElement('button');
-  closeBtn.className = 'text-xl text-gray-600 hover:text-black transition-colors'; // 减小关闭按钮
+  closeBtn.className = 'text-xl text-gray-600 hover:text-black transition-colors';
   closeBtn.innerHTML = '<i class="fas fa-times"></i>';
   closeBtn.onclick = hideResult;
   
@@ -510,10 +510,10 @@ function showResultModal(selectedNames, selectedAction, selectedSubject) {
 
   // 统计信息
   const stats = document.createElement('div');
-  stats.className = 'bg-gray-50 rounded-lg p-4'; // 减小内边距和圆角
+  stats.className = 'bg-gray-50 rounded-lg p-4';
   
   const statsContent = document.createElement('div');
-  statsContent.className = 'flex flex-wrap gap-4'; // 允许换行显示
+  statsContent.className = 'flex flex-wrap gap-4';
   
   const statItems = [
     { label: '任务类型', value: selectedAction },
@@ -540,15 +540,15 @@ function showResultModal(selectedNames, selectedAction, selectedSubject) {
   
   statItems.forEach(item => {
     const statDiv = document.createElement('div');
-    statDiv.className = 'stats-item min-w-[120px]'; // 设置最小宽度
+    statDiv.className = 'stats-item min-w-[120px]';
     
     const label = document.createElement('div');
-    label.className = 'text-xs mb-1'; // 减小标签大小
+    label.className = 'text-xs mb-1';
     label.textContent = item.label;
     
     const value = document.createElement('div');
     value.className = item.isReview ? 
-      'text-xl font-semibold text-red-600' : // 减小值大小
+      'text-xl font-semibold text-red-600' : 
       'text-xl font-semibold';
     value.textContent = item.value;
     
@@ -559,43 +559,43 @@ function showResultModal(selectedNames, selectedAction, selectedSubject) {
 
   stats.appendChild(statsContent);
 
-  // 导出按钮
-  const exportBtn = document.createElement('div');
-  exportBtn.className = 'flex justify-center'; // 居中按钮
-  
-  const exportBtnInner = document.createElement('button');
-  exportBtnInner.className = 'flex items-center px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors text-sm'; // 减小按钮尺寸
-  exportBtnInner.innerHTML = '<i class="fas fa-file-text mr-2 text-sm"></i>导出文本文件';
-  exportBtnInner.onclick = () => exportAsTxt(selectedAction, selectedNames, selectedSubject);
-  
-  exportBtn.appendChild(exportBtnInner);
-
-  // 结果列表 - 重点优化：每行显示更多卡片
+  // 结果列表
   const resultGrid = document.createElement('div');
-  resultGrid.className = 'grid gap-3'; // 减小卡片间隙
-  // 增加每行显示的卡片数量
-  resultGrid.style.gridTemplateColumns = 'repeat(auto-fill, minmax(160px, 1fr))'; 
+  resultGrid.className = 'grid gap-3';
+  resultGrid.style.gridTemplateColumns = 'repeat(auto-fill, minmax(160px, 1fr))';
   
   // 预先创建所有卡片但初始设置为不可见
   selectedNames.forEach(name => {
     const card = document.createElement('div');
-    card.className = 'bg-gray-50 rounded-xl p-3 flex items-center justify-center'; // 减小内边距，居中内容
+    card.className = 'bg-gray-50 rounded-xl p-3 flex items-center justify-center';
     card.style.opacity = '0';
     card.style.transform = 'translateY(20px)';
     
     const nameDiv = document.createElement('div');
-    nameDiv.className = 'text-xl font-medium text-center'; // 保持名字大小但居中显示
+    nameDiv.className = 'text-xl font-medium text-center';
     nameDiv.textContent = name;
     
     card.appendChild(nameDiv);
     resultGrid.appendChild(card);
   });
 
+  // 导出按钮 - 移动到页面底部，使用灰色背景
+  const exportBtn = document.createElement('div');
+  exportBtn.className = 'flex justify-center mt-8';
+  
+  const exportBtnInner = document.createElement('button');
+  // 使用灰色背景（原样式）
+  exportBtnInner.className = 'flex items-center px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors text-base';
+  exportBtnInner.innerHTML = '<i class="fas fa-file-text mr-2"></i>导出文本文件';
+  exportBtnInner.onclick = () => exportAsTxt(selectedAction, selectedNames, selectedSubject);
+  
+  exportBtn.appendChild(exportBtnInner);
+
   // 组装页面
   container.appendChild(header);
   container.appendChild(stats);
-  container.appendChild(exportBtn);
-  container.appendChild(resultGrid);
+  container.appendChild(resultGrid);  // 先添加结果卡片
+  container.appendChild(exportBtn);   // 最后添加导出按钮
   resultPage.appendChild(container);
   document.body.appendChild(resultPage);
 
@@ -635,14 +635,6 @@ function showResultModal(selectedNames, selectedAction, selectedSubject) {
       ease: 'power2.out'
     }, "-=0.2");
 
-    // 导出按钮
-    tl.from(exportBtn, {
-      y: 20,
-      opacity: 0,
-      duration: 0.4,
-      ease: 'power2.out'
-    }, "-=0.2");
-
     // 结果卡片逐个显示
     tl.to(resultGrid.children, {
       opacity: 1,
@@ -650,11 +642,19 @@ function showResultModal(selectedNames, selectedAction, selectedSubject) {
       duration: 0.5,
       stagger: {
         amount: 0.8,
-        grid: [5, 4], // 增加网格密度
+        grid: [5, 4],
         from: 'start',
         ease: 'power2.out'
       }
     }, "-=0.2");
+
+    // 导出按钮 - 在卡片动画之后显示
+    tl.from(exportBtn, {
+      y: 30,
+      opacity: 0,
+      duration: 0.5,
+      ease: 'power2.out'
+    }, "+=0.2"); // 添加延迟确保在卡片后显示
   });
 }
 
