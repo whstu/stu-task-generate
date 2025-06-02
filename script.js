@@ -657,7 +657,7 @@ function showResultModal(selectedNames, selectedAction, selectedSubject) {
       duration: 0.5,
       stagger: {
         amount: 0.8,  // 控制整体动画持续时间
-        grid: [4, 3], // 网格布局
+        grid: [4, 4], // 网格布局
         from: 'start',
         ease: 'power2.out'
       }
